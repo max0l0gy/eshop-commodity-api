@@ -1,10 +1,11 @@
 spring:
+  cloud:
+    config:
+      enabled: false
   application:
     name: eshop-commodity-api
   profiles:
     active: dev
-  main:
-    allow-bean-definition-overriding: true
   messages:
     basename: i18n/messages # for multiple properties just use comma separated values
     encoding: UTF-8

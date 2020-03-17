@@ -9,8 +9,6 @@ spring:
   messages:
     basename: i18n/messages # for multiple properties just use comma separated values
     encoding: UTF-8
-  main:
-    allow-bean-definition-overriding: true
   jpa:
     show-sql: true
     ddl-auto: update
