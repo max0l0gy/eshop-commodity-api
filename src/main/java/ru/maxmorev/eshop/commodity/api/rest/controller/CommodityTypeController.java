@@ -1,5 +1,6 @@
 package ru.maxmorev.eshop.commodity.api.rest.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,19 +22,11 @@ import java.util.Locale;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class CommodityTypeController {
 
-    private CommodityService commodityService;
-    private MessageSource messageSource;
-
-    @Autowired
-    public void setCommodityService(CommodityService commodityService) {
-        this.commodityService = commodityService;
-    }
-    @Autowired
-    public void setMessageSource(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
+    private final CommodityService commodityService;
+    private final MessageSource messageSource;
 
     @RequestMapping(path = "/types", method = RequestMethod.GET)
     @ResponseBody
