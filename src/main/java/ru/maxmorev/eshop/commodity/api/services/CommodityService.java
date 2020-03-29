@@ -38,6 +38,8 @@ public interface CommodityService {
 
     void updateCommodity(RequestCommodity requestCommodity);
 
+    CommodityBranch addAmount(Long branchId, int amount);
+
     List<CommodityBranch> findAllBranches();
 
     Optional<CommodityBranch> findBranchById(Long branchId);

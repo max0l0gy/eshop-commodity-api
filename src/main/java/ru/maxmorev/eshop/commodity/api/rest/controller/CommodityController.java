@@ -20,6 +20,7 @@ import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 import ru.maxmorev.eshop.commodity.api.services.CommodityService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -115,6 +116,15 @@ public class CommodityController {
                 .findBranchById(branchId)
                 .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("commodity.branch.error.id", new Object[]{branchId}, locale)));
 
+    }
+
+    @RequestMapping(path = "/branch/{id}/addAmount/{amount}", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommodityBranch addAmountToBranch(@PathVariable(name = "id", required = true) @NotNull Long branchId,
+                                             @PathVariable(name = "amount", required = true) @NotNull Integer amount,
+                                             Locale locale) throws Exception {
+        log.info("addAmountToBranch id={}, amount={}", branchId, amount);
+        return commodityService.addAmount(branchId, amount);
     }
 
 }

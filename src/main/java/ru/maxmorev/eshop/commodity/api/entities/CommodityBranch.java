@@ -36,32 +36,25 @@ public class CommodityBranch {
     @GeneratedValue(generator = Constants.ID_GENERATOR_BRANCH)
     @Column(updatable = false)
     protected Long id;
-
     @Version
     @Column(name = "VERSION")
     private int version;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "commodity_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_COMMODITY_BRANCH"))
     @JsonIgnore
     private Commodity commodity;
-
     @Column(nullable = false)
-    private Integer amount; //amount of items in branch
+    private Integer amount;
     @Column(nullable = false)
-    private Float price; //price for 1 item in branch
-
+    private Float price;
     @Column(nullable = false)
     private Currency currency; //current price currency
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "branch", orphanRemoval = true, targetEntity = CommodityBranchAttributeSet.class, fetch = FetchType.LAZY)
     @org.hibernate.annotations.BatchSize(size = 10)
     private Set<CommodityBranchAttributeSet> attributeSet = new HashSet<>();
-
     public String getCode() {
         return commodity.getId() + "-" + this.getId();
     }
-
     public Long getCommodityId() {
         return this.commodity.getId();
     }

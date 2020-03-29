@@ -31,10 +31,6 @@ spring:
     username: postgres
     password: postgres
 
-#
-# APP PROPS
-server:
-  port: 8080
 #actuator
 management:
   endpoints:
@@ -45,3 +41,6 @@ management:
     export:
       atlas:
         enabled: false
+
+server:
+  port: 8082

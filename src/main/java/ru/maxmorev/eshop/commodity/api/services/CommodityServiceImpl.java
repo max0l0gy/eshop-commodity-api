@@ -195,7 +195,7 @@ public class CommodityServiceImpl implements CommodityService {
     /*
         COMMODITY
      */
-    private List<CommodityImage> createImageListOf(Commodity commodity, RequestCommodity requestCommodity){
+    private List<CommodityImage> createImageListOf(Commodity commodity, RequestCommodity requestCommodity) {
         List<CommodityImage> commodityImages = new ArrayList<>(requestCommodity.getImages().size());
         log.info("requestCommodity.getImages() > {}", requestCommodity.getImages());
         Short imageIndex = 0;
@@ -334,6 +334,17 @@ public class CommodityServiceImpl implements CommodityService {
             commodityRepository.save(commodity);
 
         });
+    }
+
+    @Override
+    public CommodityBranch addAmount(Long branchId, int amount) {
+        CommodityBranch branch = commodityBranchRepository.findById(branchId)
+                .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
+        if (branch.getAmount().intValue() + amount < 0) {
+            throw new IllegalArgumentException("Branch amount can not be less then zero");
+        }
+        branch.setAmount(branch.getAmount().intValue() + amount);
+        return commodityBranchRepository.save(branch);
     }
 
     @Override
