@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.maxmorev.eshop.commodity.api.entities.Commodity;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGrid;
+import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
-import ru.maxmorev.eshop.commodity.api.services.CommodityService;
+import ru.maxmorev.eshop.commodity.api.services.CommodityDtoService;
+import ru.maxmorev.eshop.commodity.api.services.CommodityTypeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -30,13 +34,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CommodityController {
 
-    private final CommodityService commodityService;
+    private final CommodityDtoService commodityService;
     private final MessageSource messageSource;
 
     @RequestMapping(path = "/commodity/", method = RequestMethod.POST)
     @ResponseBody
     public Message createCommodityFromRequset(@RequestBody @Valid RequestCommodity requestCommodity, Locale locale) {
-        log.info("POST -> createCommodityFromRequset");
         commodityService.addCommodity(requestCommodity);
         return new Message(Message.SUCCES, messageSource.getMessage("message_success", new Object[]{}, locale));
     }
@@ -44,14 +47,21 @@ public class CommodityController {
     @RequestMapping(path = "/commodity/", method = RequestMethod.PUT)
     @ResponseBody
     public Message updateCommodity(@RequestBody @Valid RequestCommodity requestCommodity, Locale locale) {
-        log.info("PUT -> updateCommodity");
         commodityService.updateCommodity(requestCommodity);
         return new Message(Message.SUCCES, messageSource.getMessage("message_success", new Object[]{}, locale));
     }
 
     @RequestMapping(path = "/commodity/id/{id}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Commodity getCommodity(@PathVariable(name = "id", required = true) Long id, Locale locale) throws Exception {
+    public CommodityDto getCommodity(@PathVariable(name = "id", required = true) Long id, Locale locale) throws Exception {
+        return commodityService.findCommodityByIdWithBranchesAmountGt0(id)
+                .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("commodity.error.id", new Object[]{id}, locale)));
+
+    }
+
+    @RequestMapping(path = "/commodity/id/{id}/any/branches", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public CommodityDto getCommodityAnyBranches(@PathVariable(name = "id", required = true) Long id, Locale locale) throws Exception {
         return commodityService.findCommodityById(id)
                 .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("commodity.error.id", new Object[]{id}, locale)));
 
@@ -59,7 +69,7 @@ public class CommodityController {
 
     @RequestMapping(path = "/commodities/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public CommodityGrid listCommodity(
+    public CommodityGridDto listCommodity(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "rows", required = false) Integer rows,
             @RequestParam(value = "sort", required = false) String sortBy,
@@ -100,18 +110,12 @@ public class CommodityController {
             pageRequest = PageRequest.of(page - 1, rows);
         }
         // Construct the grid data that will return as JSON data
-        return new CommodityGrid(commodityService.findAllCommoditiesByPage(pageRequest));
-    }
-
-    @RequestMapping(path = "/branches/", method = RequestMethod.GET)
-    @ResponseBody
-    public List<CommodityBranch> getBranches() throws Exception {
-        return commodityService.findAllBranches();
+        return commodityService.findAllCommoditiesByPage(pageRequest);
     }
 
     @RequestMapping(path = "/branch/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public CommodityBranch getCommodityBranch(@PathVariable(name = "id", required = true) Long branchId, Locale locale) throws Exception {
+    public CommodityBranchDto getCommodityBranch(@PathVariable(name = "id") Long branchId, Locale locale) throws Exception {
         return commodityService
                 .findBranchById(branchId)
                 .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("commodity.branch.error.id", new Object[]{branchId}, locale)));
@@ -120,7 +124,7 @@ public class CommodityController {
 
     @RequestMapping(path = "/branch/{id}/addAmount/{amount}", method = RequestMethod.PUT)
     @ResponseBody
-    public CommodityBranch addAmountToBranch(@PathVariable(name = "id", required = true) @NotNull Long branchId,
+    public CommodityBranchDto addAmountToBranch(@PathVariable(name = "id", required = true) @NotNull Long branchId,
                                              @PathVariable(name = "amount", required = true) @NotNull Integer amount,
                                              Locale locale) throws Exception {
         log.info("addAmountToBranch id={}, amount={}", branchId, amount);

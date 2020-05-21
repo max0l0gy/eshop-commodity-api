@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.maxmorev.eshop.commodity.api.config.TestConfig;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityType;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
-import ru.maxmorev.eshop.commodity.api.services.CommodityService;
+import ru.maxmorev.eshop.commodity.api.services.CommodityTypeService;
 
 
 import static org.hamcrest.Matchers.is;
@@ -39,7 +39,7 @@ public class CommodityTypeControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private CommodityService commodityService;
+    private CommodityTypeService commodityTypeService;
 
     @Test
     @DisplayName("Should return commodity type info")
@@ -108,7 +108,7 @@ public class CommodityTypeControllerTest {
                     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
     })
     public void updateCommodityTypeTest() throws Exception {
-        CommodityType type = commodityService.findTypeById(24L).get();
+        CommodityType type = commodityTypeService.findTypeById(24L).get();
         assertEquals("test delete", type.getDescription());
         type.setDescription("Type Update test controller");
         mockMvc.perform(put("/type/")
@@ -131,7 +131,7 @@ public class CommodityTypeControllerTest {
                     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
     })
     public void updateCommodityTypeValidationTest() throws Exception {
-        CommodityType type = commodityService.findTypeById(24L).get();
+        CommodityType type = commodityTypeService.findTypeById(24L).get();
         assertEquals("test delete", type.getDescription());
         type.setDescription("Type");
         mockMvc.perform(put("/type/")
