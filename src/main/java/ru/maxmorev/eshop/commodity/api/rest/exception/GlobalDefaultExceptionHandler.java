@@ -1,8 +1,6 @@
 package ru.maxmorev.eshop.commodity.api.rest.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +13,7 @@ import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,16 +56,15 @@ public class GlobalDefaultExceptionHandler {
      * @param ex MethodArgumentNotValidException
      * @return @see ru.maxmorev.restful.eshop.rest.response.Message
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public Message validationException(HttpServletRequest req, MethodArgumentNotValidException ex) {
         log.debug("Errors: {}", ex.getBindingResult().getAllErrors());
         List<Message.ErrorDetail> fieldsErrorDetails = ex.getBindingResult().getFieldErrors().stream()
-                .map(e -> new Message.ErrorDetail(e.getField(), e.getDefaultMessage()))
+                .map(e -> new Message.ErrorDetail(e.getField(), Objects.requireNonNull(e.getDefaultMessage())))
                 .collect(Collectors.toList());
-        Message responseMessage = new Message(Message.ERROR, req.getRequestURL().toString(), "Validation error", fieldsErrorDetails);
-        return responseMessage;
+        return new Message(Message.ERROR, req.getRequestURL().toString(), "Validation error", fieldsErrorDetails);
     }
 
 
@@ -78,4 +76,14 @@ public class GlobalDefaultExceptionHandler {
         Message responseMessage = new Message(Message.ERROR, req.getRequestURL().toString(), ex.getLocalizedMessage(), Collections.EMPTY_LIST);
         return responseMessage;
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = org.hibernate.exception.ConstraintViolationException.class)
+    @ResponseBody
+    public Message handleConstraintViolationException(HttpServletRequest req, Exception ex) {
+        log.error(ex.getLocalizedMessage(), ex);
+        Message responseMessage = new Message(Message.ERROR, req.getRequestURL().toString(), ex.getLocalizedMessage(), Collections.EMPTY_LIST);
+        return responseMessage;
+    }
+
 }

@@ -12,54 +12,42 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.maxmorev.eshop.commodity.api.entities.Commodity;
-import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGrid;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 import ru.maxmorev.eshop.commodity.api.services.CommodityDtoService;
-import ru.maxmorev.eshop.commodity.api.services.CommodityTypeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
-public class CommodityController {
+@RequestMapping(value = "/api/manager/")
+public class CommodityManagmentController {
 
     private final CommodityDtoService commodityService;
     private final MessageSource messageSource;
 
-    @RequestMapping(path = "/commodity/", method = RequestMethod.POST)
+    @RequestMapping(path = "commodity/", method = RequestMethod.POST)
     @ResponseBody
     public Message createCommodityFromRequset(@RequestBody @Valid RequestCommodity requestCommodity, Locale locale) {
         commodityService.addCommodity(requestCommodity);
         return new Message(Message.SUCCES, messageSource.getMessage("message_success", new Object[]{}, locale));
     }
 
-    @RequestMapping(path = "/commodity/", method = RequestMethod.PUT)
+    @RequestMapping(path = "commodity/", method = RequestMethod.PUT)
     @ResponseBody
     public Message updateCommodity(@RequestBody @Valid RequestCommodity requestCommodity, Locale locale) {
         commodityService.updateCommodity(requestCommodity);
         return new Message(Message.SUCCES, messageSource.getMessage("message_success", new Object[]{}, locale));
     }
 
-    @RequestMapping(path = "/commodity/id/{id}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public CommodityDto getCommodity(@PathVariable(name = "id", required = true) Long id, Locale locale) throws Exception {
-        return commodityService.findCommodityByIdWithBranchesAmountGt0(id)
-                .orElseThrow(() -> new IllegalArgumentException(messageSource.getMessage("commodity.error.id", new Object[]{id}, locale)));
-
-    }
-
-    @RequestMapping(path = "/commodity/id/{id}/any/branches", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(path = "commodity/id/{id}/any/branches", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public CommodityDto getCommodityAnyBranches(@PathVariable(name = "id", required = true) Long id, Locale locale) throws Exception {
         return commodityService.findCommodityById(id)
@@ -67,7 +55,7 @@ public class CommodityController {
 
     }
 
-    @RequestMapping(path = "/commodities/", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(path = "commodity/list", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public CommodityGridDto listCommodity(
             @RequestParam(value = "page", required = false) Integer page,
@@ -113,7 +101,7 @@ public class CommodityController {
         return commodityService.findAllCommoditiesByPage(pageRequest);
     }
 
-    @RequestMapping(path = "/branch/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "branch/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommodityBranchDto getCommodityBranch(@PathVariable(name = "id") Long branchId, Locale locale) throws Exception {
         return commodityService
@@ -122,7 +110,7 @@ public class CommodityController {
 
     }
 
-    @RequestMapping(path = "/branch/{id}/addAmount/{amount}", method = RequestMethod.PUT)
+    @RequestMapping(path = "branch/{id}/amount/inc/{amount}", method = RequestMethod.PUT)
     @ResponseBody
     public CommodityBranchDto addAmountToBranch(@PathVariable(name = "id", required = true) @NotNull Long branchId,
                                              @PathVariable(name = "amount", required = true) @NotNull Integer amount,

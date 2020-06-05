@@ -121,7 +121,7 @@ public class CommodityAttributeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"typeId\":1, \"name\":\"size\", \"dataType\":\"string\", \"measure\":null, \"value\":\"m\"}"))
                 .andDo(print())
-                .andExpect(status().is(500))
+                .andExpect(status().is(400))
                 .andExpect(jsonPath("$.status", is(Message.ERROR)))
                 .andExpect(jsonPath("$.message", is("Validation error")))
                 .andExpect(jsonPath("$.errors").isArray());

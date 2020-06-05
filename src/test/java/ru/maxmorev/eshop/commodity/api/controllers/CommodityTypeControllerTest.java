@@ -2,18 +2,20 @@ package ru.maxmorev.eshop.commodity.api.controllers;
 
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.maxmorev.eshop.commodity.api.config.TestConfig;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityType;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 import ru.maxmorev.eshop.commodity.api.services.CommodityTypeService;
@@ -29,11 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
+@SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
+@AutoConfigureWireMock(port=0)
 @RunWith(SpringRunner.class)
 @DisplayName("Integration controller (CommodityTypeController) test")
-@SpringBootTest(classes = TestConfig.class)
 public class CommodityTypeControllerTest {
 
     @Autowired
@@ -138,7 +141,7 @@ public class CommodityTypeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(type.toString()))
                 .andDo(print())
-                .andExpect(status().is(500))
+                .andExpect(status().is(400))
                 .andExpect(jsonPath("$.message", is("Validation error")))
                 .andExpect(jsonPath("$.errors[0].field", is("description")));
     }
@@ -168,10 +171,11 @@ public class CommodityTypeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(type.toString()))
                 .andDo(print())
-                .andExpect(status().is(500))
+                .andExpect(status().is(400))
                 .andExpect(jsonPath("$.status", is(Message.ERROR)))
                 .andExpect(jsonPath("$.message", is("Validation error")))
-                .andExpect(jsonPath("$.errors").isArray());
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0].message", is("The description must contain from 8 to 128 characters")));
     }
 
 }

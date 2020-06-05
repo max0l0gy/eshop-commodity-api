@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Builder
 public class CommodityBranchDto {
     private Long id;
+    private Long commodityId;
     private Integer amount;
     private Float price;
     private String currency;
@@ -21,6 +22,7 @@ public class CommodityBranchDto {
     public static CommodityBranchDto of(CommodityBranch b){
         return CommodityBranchDto.builder()
                 .id(b.getId())
+                .commodityId(b.getCommodityId())
                 .amount(b.getAmount())
                 .price(b.getPrice())
                 .currency(b.getCurrency().getCurrencyCode())
