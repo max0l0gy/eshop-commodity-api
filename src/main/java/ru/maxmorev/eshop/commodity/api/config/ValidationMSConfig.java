@@ -15,16 +15,14 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ValidationMSConfig {
     private final MessageSource messageSource;
-    public MessageSource messageSource() {
 
+    public MessageSource messageSource() {
         return messageSource;
     }
 
     @Bean
     @SneakyThrows
     public LocalValidatorFactoryBean validator() {
-        log.info("--------------CONFIG VALIDATOR--------------");
-        log.info("message {}", messageSource().getMessage("validation.CommodityType.description.size.message", null, Locale.getDefault()));
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource());
         return bean;
