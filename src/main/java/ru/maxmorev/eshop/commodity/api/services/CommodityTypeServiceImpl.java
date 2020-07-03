@@ -128,9 +128,7 @@ public class CommodityTypeServiceImpl implements CommodityTypeService {
                 commodityAttributeValueRepository.findById(valueId);
         if (av.isPresent()) {
             CommodityAttribute ca = av.get().getAttribute();
-
-            log.info("remove value {} : {}", av.get().getValue(), ca.getValues().remove(av.get()));
-
+            ca.getValues().remove(av.get());
             if (ca.getValues().isEmpty()) {
                 //delete empty property
                 commodityAttributeRepository.delete(ca);

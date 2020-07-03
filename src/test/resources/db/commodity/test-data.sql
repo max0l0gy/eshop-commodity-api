@@ -4,6 +4,7 @@ insert into commodity_attribute (id, name, type_id,	data_type, attribute_measure
 insert into commodity_attribute (id, name, type_id,	data_type, attribute_measure) values (8, 'color', 1, 'String', null);
 
 insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (3, 's', 2, null, null, null);
+insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (33, 'm', 2, null, null, null);
 insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (9, '#00fc12', 8,  null, null, null);
 
 insert into commodity (id, type_id, name, short_description, overview, date_of_creation, VERSION) values (4, 1,	't-shirt', 'test description',	'Overview t-shirt test',	'2019-08-25 18:46:23.918',	1);

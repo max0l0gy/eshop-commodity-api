@@ -1,11 +1,11 @@
 package ru.maxmorev.eshop.commodity.api.services;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
+import ru.maxmorev.eshop.commodity.api.rest.response.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityTypeDto;
 
 import java.util.List;
@@ -20,8 +20,9 @@ public interface CommodityDtoService {
     Optional<CommodityTypeDto> findTypeByName(String name);
 
 
-    void addCommodity(RequestCommodity requestCommodity);
-    void updateCommodity(RequestCommodity requestCommodity);
+    void addCommodity(RequestAddCommodity requestCommodity);
+    void updateCommodity(CommodityInfoDto commodityInfoDto);
+    void updateCommodityBranch(CommodityBranchDto requestCommodity);
     CommodityBranchDto addAmount(Long branchId, int amount);
     Optional<CommodityBranchDto> findBranchById(Long branchId);
     CommodityGridDto findAllCommoditiesByPage(Pageable pageable);

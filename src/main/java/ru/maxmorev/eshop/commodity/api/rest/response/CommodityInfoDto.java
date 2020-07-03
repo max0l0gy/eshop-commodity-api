@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityImage;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityInfo;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
+@Setter
 public class CommodityInfoDto {
     private Long id;
     private String name;

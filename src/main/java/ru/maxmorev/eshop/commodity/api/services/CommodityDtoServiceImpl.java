@@ -5,26 +5,31 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.maxmorev.eshop.commodity.api.entities.Commodity;
+import ru.maxmorev.eshop.commodity.api.entities.CommodityAttribute;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityAttributeValue;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranchAttributeSet;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityImage;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityType;
+import ru.maxmorev.eshop.commodity.api.repository.CommodityAttributeRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityAttributeValueRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityBranchRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityTypeRepository;
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGrid;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
+import ru.maxmorev.eshop.commodity.api.rest.response.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityTypeDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,7 +39,8 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
     private final CommodityRepository commodityRepository;
     private final CommodityBranchRepository commodityBranchRepository;
     private final CommodityTypeRepository commodityTypeRepository;
-    private CommodityAttributeValueRepository commodityAttributeValueRepository;
+    private final CommodityAttributeRepository commodityAttributeRepository;
+    private final CommodityAttributeValueRepository commodityAttributeValueRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -99,10 +105,10 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
                 .map(CommodityTypeDto::of);
     }
 
-    private List<CommodityImage> createImageListOf(Commodity commodity, RequestCommodity requestCommodity) {
-        List<CommodityImage> commodityImages = new ArrayList<>(requestCommodity.getImages().size());
+    private List<CommodityImage> createImageListOf(Commodity commodity, List<String> images) {
+        List<CommodityImage> commodityImages = new ArrayList<>(images.size());
         Short imageIndex = 0;
-        for (String imageUrl : requestCommodity.getImages()) {
+        for (String imageUrl : images) {
             CommodityImage image = new CommodityImage();
             image.setImageOrder(imageIndex);
             image.setUri(imageUrl);
@@ -114,7 +120,7 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
         return commodityImages;
     }
 
-    private Commodity createCommodityFromRequest(RequestCommodity requestCommodity) {
+    private Commodity createCommodityFromRequest(RequestAddCommodity requestCommodity) {
         CommodityType commodityType;
         Optional<CommodityType> commodityTypeExist = commodityTypeRepository.findById(requestCommodity.getTypeId());
 
@@ -130,12 +136,12 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
         commodity.setOverview(requestCommodity.getOverview());
         commodity.setType(commodityType);
         //commodityRepository.save( commodity );
-        commodity.getImages().addAll(createImageListOf(commodity, requestCommodity));
+        commodity.getImages().addAll(createImageListOf(commodity, requestCommodity.getImages()));
         //create images of commodity
         return commodity;
     }
 
-    private void createCommodityBranch(RequestCommodity requestCommodity, Commodity commodity) {
+    private void createCommodityBranch(RequestAddCommodity requestCommodity, Commodity commodity) {
         //create branch
         CommodityBranch commodityBranch = new CommodityBranch();
         commodityBranch.setAmount(requestCommodity.getAmount());
@@ -175,7 +181,7 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
      * @param requestCommodity
      */
     @Override
-    public void addCommodity(RequestCommodity requestCommodity) {
+    public void addCommodity(RequestAddCommodity requestCommodity) {
         Optional<Commodity> commodityExist = commodityRepository.findByNameAndType(requestCommodity.getName(), commodityTypeRepository.findById(requestCommodity.getTypeId()).get());
         if (commodityExist.isPresent()) {
             //create new branch for existent commodity
@@ -191,44 +197,46 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
     }
 
     @Override
-    public void updateCommodity(RequestCommodity requestCommodity) {
-        commodityBranchRepository.findById(requestCommodity.getBranchId()).ifPresent(branch -> {
+    public void updateCommodity(CommodityInfoDto rc) {
+        commodityRepository.findById(rc.getId()).ifPresent(c -> {
+            c.setName(rc.getName());
+            c.setShortDescription(rc.getShortDescription());
+            c.setOverview(rc.getOverview());
+            c.getImages().forEach(commodityImage -> commodityImage.setCommodity(null));
+            c.getImages().clear();
+            c.getImages().addAll(createImageListOf(c, rc.getImages()));
+            commodityRepository.save(c);
+        });
+    }
 
-            List<CommodityBranchAttributeSet> propertySetList = new ArrayList<>(branch.getAttributeSet());
-
-            if (requestCommodity.getPropertyValues().size() > 0) {
+    @Override
+    public void updateCommodityBranch(CommodityBranchDto requestCommodity) {
+        commodityBranchRepository.findById(requestCommodity.getId()).ifPresent(branch -> {
+            List<CommodityBranchAttributeSet> attributeSets = new ArrayList<>(branch.getAttributeSet());
+            List<CommodityAttribute> commodityAttributes = commodityAttributeRepository.findByCommodityType(branch.getCommodity().getType());
+            if (requestCommodity.getAttributes().size() > 0) {
                 //updateBranch = true;
-                propertySetList.forEach(set -> branch.getAttributeSet().remove(set));
-
-                //TODO change attributeSet think bout refactorin
-                List<Long> valueIdList = requestCommodity.getPropertyValues();
-                for (Long propertyValueId : valueIdList) {
-                    Optional<CommodityAttributeValue> commodityPropertyValueExist = commodityAttributeValueRepository.findById(propertyValueId);
-                    commodityPropertyValueExist.ifPresent(commodityAttributeValue -> {
-                                CommodityBranchAttributeSet newAttribute = new CommodityBranchAttributeSet();
-                                newAttribute.setBranch(branch);
-                                newAttribute.setAttribute(commodityAttributeValue.getAttribute());
-                                newAttribute.setAttributeValue(commodityAttributeValue);
-                                branch.getAttributeSet().add(newAttribute);
-                            }
-
-                    );
-
-                }
-
+                attributeSets.forEach(set -> branch.getAttributeSet().remove(set));
+                requestCommodity.getAttributes()
+                        .forEach(attributeDto -> commodityAttributes.stream()
+                                .filter(attr -> attr.getName().equals(attributeDto.getName()))
+                                .findFirst()
+                                .flatMap(commodityAttribute -> commodityAttribute.getValues()
+                                        .stream()
+                                        .filter(av -> av.getValue().toString().equals(attributeDto.getValue()))
+                                        .findFirst())
+                                .ifPresent(commodityAttributeValue -> {
+                                    CommodityBranchAttributeSet newAttribute = new CommodityBranchAttributeSet();
+                                    newAttribute.setBranch(branch);
+                                    newAttribute.setAttribute(commodityAttributeValue.getAttribute());
+                                    newAttribute.setAttributeValue(commodityAttributeValue);
+                                    branch.getAttributeSet().add(newAttribute);
+                                }));
             }
+            branch.setCurrency(Currency.getInstance(requestCommodity.getCurrency()));
             branch.setAmount(requestCommodity.getAmount());
             branch.setPrice(requestCommodity.getPrice());
-            Commodity commodity = branch.getCommodity();
-            commodity.setShortDescription(requestCommodity.getShortDescription());
-            commodity.setOverview(requestCommodity.getOverview());
-            commodity.setName(requestCommodity.getName());
-            commodity.getImages().forEach(commodityImage -> commodityImage.setCommodity(null));
-            commodity.getImages().clear();
-            commodity.getImages().addAll(createImageListOf(commodity, requestCommodity));
-            //commodityBranchRepository.save(branch);
-            commodityRepository.save(commodity);
-
+            commodityBranchRepository.save(branch);
         });
     }
 
@@ -236,10 +244,10 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
     public CommodityBranchDto addAmount(Long branchId, int amount) {
         CommodityBranch branch = commodityBranchRepository.findById(branchId)
                 .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
-        if (branch.getAmount().intValue() + amount < 0) {
+        if (branch.getAmount() + amount < 0) {
             throw new IllegalArgumentException("Branch amount can not be less then zero");
         }
-        branch.setAmount(branch.getAmount().intValue() + amount);
+        branch.setAmount(branch.getAmount() + amount);
         return CommodityBranchDto.of(commodityBranchRepository.save(branch));
     }
 
@@ -253,24 +261,20 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
     @Override
     @Transactional(readOnly = true)
     public CommodityGridDto findAllCommoditiesByPage(Pageable pageable) {
-        return CommodityGridDto.of( new CommodityGrid(commodityRepository.findAll(pageable)));
+        return CommodityGridDto.of(new CommodityGrid(commodityRepository.findAll(pageable)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CommodityDto> findAllCommoditiesByTypeName(String typeName) {
-
         Optional<CommodityType> typeExist = commodityTypeRepository.findByName(typeName);
-        if (typeExist.isPresent()) {
-            return commodityRepository.findByType(typeExist.get())
-                    .stream()
-                    .map(c->CommodityDto.of(c, c.getBranches()
-                            .stream()
-                            .map(CommodityBranchDto::of)
-                            .collect(Collectors.toList())))
-                    .collect(Collectors.toList());
-        }
-        return null;
+        return typeExist.map(commodityType -> commodityRepository.findByType(commodityType)
+                .stream()
+                .map(c -> CommodityDto.of(c, c.getBranches()
+                        .stream()
+                        .map(CommodityBranchDto::of)
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList())).orElse(Collections.emptyList());
     }
 
     @Override

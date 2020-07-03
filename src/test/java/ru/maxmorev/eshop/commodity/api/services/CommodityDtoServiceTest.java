@@ -1,9 +1,11 @@
 package ru.maxmorev.eshop.commodity.api.services;
 
 import com.google.common.collect.ImmutableList;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,8 @@ import ru.maxmorev.eshop.commodity.api.entities.CommodityBranchAttributeSet;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityImage;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityBranchRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityRepository;
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.response.AttributeDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 
@@ -28,12 +31,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -65,7 +70,7 @@ public class CommodityDtoServiceTest {
     public void testAddCommodity() throws Exception {
 
         //void addCommodity(RequestCommodity requestCommodity);
-        RequestCommodity rc = new RequestCommodity();
+        RequestAddCommodity rc = new RequestAddCommodity();
         rc.setAmount(1);
         rc.setPrice(3500f);
         rc.setName("Commodity1");
@@ -90,6 +95,86 @@ public class CommodityDtoServiceTest {
     }
 
     @Test
+    @DisplayName("should update commodity")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    @Transactional
+    @SneakyThrows
+    public void testUpdateCommodity() {
+        CommodityDto cm = commodityService.findCommodityById(4l).get();
+        assertEquals("t-shirt", cm.getName());
+        assertEquals(1, cm.getImages().size());
+        cm.setName("t-shirt-update");
+        cm.setShortDescription("test description update");
+        cm.setOverview("Overview t-shirt test update");
+        cm.setImages(List.of(
+                "https://i.pinimg.com/236x/e9/77/ab/e977abd9949dfafa25431f19dca0c2f6--john-connor-sarah-connor.jpg",
+                "https://i.pinimg.com/564x/28/a0/df/28a0dfe3ccb2e0643753c123af6fbdcf.jpg"));
+        commodityService.updateCommodity(cm);
+        em.flush();
+        cm = commodityService.findCommodityById(4l).get();
+        assertEquals("t-shirt-update", cm.getName());
+        assertEquals("test description update", cm.getShortDescription());
+        assertEquals("Overview t-shirt test update", cm.getOverview());
+        assertEquals(2, cm.getImages().size());
+        assertEquals(
+                "https://i.pinimg.com/236x/e9/77/ab/e977abd9949dfafa25431f19dca0c2f6--john-connor-sarah-connor.jpg",
+                cm.getImages().get(0)
+        );
+        assertEquals(
+                "https://i.pinimg.com/564x/28/a0/df/28a0dfe3ccb2e0643753c123af6fbdcf.jpg",
+                cm.getImages().get(1)
+        );
+    }
+
+    @Test
+    @DisplayName("should update commodity branch")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    @Transactional
+    @SneakyThrows
+    public void testUpdateCommodityBranch() {
+        CommodityBranchDto branch = commodityService.findBranchById(5l).get();
+        Assertions.assertEquals(3500.0f, branch.getPrice(), "expected price 3500");
+        Assertions.assertEquals("EUR", branch.getCurrency(), "expected currency is EUR");
+        Assertions.assertEquals(5, branch.getAmount().intValue(), "amount = 5");
+        Assertions.assertEquals(1, branch.getAttributes().size(), "Attributes size 1");
+        Assertions.assertTrue(branch.getAttributes().stream().anyMatch(a -> a.getName().equals("size") && a.getValue().equals("s")), "Attribute name 'size' value is 's' ");
+        branch.setAmount(1);
+        branch.setCurrency("USD");
+        branch.setPrice(50.0f);
+        branch.setAttributes(List.of(
+                AttributeDto.builder()
+                        .name("size")
+                        .value("m").build(),
+                AttributeDto.builder()
+                        .name("color")
+                        .value("#00fc12").build()
+                ));
+        commodityService.updateCommodityBranch(branch);
+        em.flush();
+        branch = commodityService.findBranchById(5l).get();
+        Assertions.assertEquals(50.0f, branch.getPrice(), "new price 50");
+        Assertions.assertEquals("USD", branch.getCurrency(), "new currency is EUR");
+        Assertions.assertEquals(1, branch.getAmount().intValue(), "new amount = 1");
+        Assertions.assertEquals(2, branch.getAttributes().size(), "Attributes size 2");
+        Assertions.assertTrue(branch.getAttributes().stream().anyMatch(a -> a.getName().equals("size") && a.getValue().equals("m")), "Attribute name 'size' new value is 'm' ");
+        Assertions.assertTrue(branch.getAttributes().stream().anyMatch(a -> a.getName().equals("color") && a.getValue().equals("#00fc12")), "New Attribute name 'color' value is '#00fc12' ");
+    }
+
+    @Test
     @DisplayName("should find all commodities")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",
@@ -103,49 +188,6 @@ public class CommodityDtoServiceTest {
         List<Commodity> commodities = commodityRepository.findAll();
         assertEquals(1, commodities.size());
         log.info("commodities {}", commodities);
-    }
-
-    @Test
-    @DisplayName("should update commodity")
-    @SqlGroup({
-            @Sql(value = "classpath:db/commodity/test-data.sql",
-                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
-                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(value = "classpath:db/commodity/clean-up.sql",
-                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
-                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-    })
-    @Transactional
-    public void testUpdateCommodity() throws Exception {
-        //updateCommodity(RequestCommodity requestCommodity )
-        RequestCommodity rc = new RequestCommodity();
-        CommodityBranch branch = commodityBranchRepository.findById(5L).get();
-        assertNotNull(branch);
-        List<String> images = new ArrayList<>();
-        for (CommodityImage image : branch.getCommodity().getImages()) {
-            images.add(image.getUri());
-        }
-        rc.setImages(images);
-        //update propertyValueId
-        List<Long> values = Arrays.asList(9L);
-        rc.setPropertyValues(values);
-        rc.setTypeId(branch.getCommodity().getType().getId());
-        rc.setShortDescription(branch.getCommodity().getShortDescription());
-        rc.setOverview(branch.getCommodity().getOverview());
-        rc.setName("BOMBER MA-1");//update name was t-shirt
-        rc.setAmount(3);//was 5
-        rc.setPrice(9000F);//was 3500f
-        rc.setBranchId(branch.getId());//if present - update in controller
-        commodityService.updateCommodity(rc);
-        em.flush();
-
-        CommodityBranch branchUpdate = commodityBranchRepository.findById(5L).get();
-        assertEquals((long) rc.getAmount(), (long) branchUpdate.getAmount());
-        assertEquals(rc.getPrice(), branchUpdate.getPrice(), 2);
-        assertEquals(rc.getName(), branchUpdate.getCommodity().getName());
-        List<CommodityBranchAttributeSet> list = Lists.newArrayList(branch.getAttributeSet());
-        assertEquals((long) 9, (long) list.get(0).getAttributeValue().getId());
-
     }
 
     @Test

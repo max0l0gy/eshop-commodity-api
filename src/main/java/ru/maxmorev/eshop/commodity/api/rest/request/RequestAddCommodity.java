@@ -23,7 +23,7 @@ import java.util.Objects;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @CheckCommodityBranchAttributes(message = "{validation.commodity.attribute.values}")
-public class RequestCommodity {
+public class RequestAddCommodity {
 
     @NotBlank(message = "{validation.commodity.name.NotBlank.message}")
     @Size(min=8, max=256, message = "{validation.commodity.name.size.message}")

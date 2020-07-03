@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommodityRepository extends PagingAndSortingRepository<Commodity, Long> {
-
+    Optional<Commodity> findById(Long id);
     Optional<Commodity> findByNameAndType(String name, CommodityType type);
     @Override
     List<Commodity> findAll();

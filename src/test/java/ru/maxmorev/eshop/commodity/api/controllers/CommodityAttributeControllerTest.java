@@ -71,7 +71,7 @@ public class CommodityAttributeControllerTest {
     }
 
     @Test
-    @DisplayName("Should remove attribute by id")
+    @DisplayName("Should remove orphan attribute value by id")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
@@ -80,8 +80,25 @@ public class CommodityAttributeControllerTest {
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
                     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
     })
-    public void deletePropertyValueTest() throws Exception {
-        mockMvc.perform(delete("/attribute/value/3"))
+    public void deleteOrphanAttributeValueTest() throws Exception {
+        mockMvc.perform(delete("/attribute/value/33"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(Message.SUCCES)));
+    }
+
+    @Test
+    @DisplayName("Should remove attribute with value by value id")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void deleteAttributeWithValueTest() throws Exception {
+        mockMvc.perform(delete("/attribute/value/9"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(Message.SUCCES)));
@@ -100,7 +117,7 @@ public class CommodityAttributeControllerTest {
     public void createAttributeTest() throws Exception {
         mockMvc.perform(post("/attribute/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"typeId\":1, \"name\":\"size\", \"dataType\":\"String\", \"measure\":null, \"value\":\"m\"}"))
+                .content("{\"typeId\":1, \"name\":\"size\", \"dataType\":\"String\", \"measure\":null, \"value\":\"l\"}"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(Message.SUCCES)));

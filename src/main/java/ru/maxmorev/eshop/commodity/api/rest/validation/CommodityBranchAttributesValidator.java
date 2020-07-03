@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.maxmorev.eshop.commodity.api.entities.Commodity;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestCommodity;
+import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityTypeRepository;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class CommodityBranchAttributesValidator implements ConstraintValidator<CheckCommodityBranchAttributes, RequestCommodity> {
+public class CommodityBranchAttributesValidator implements ConstraintValidator<CheckCommodityBranchAttributes, RequestAddCommodity> {
 
     private static final Logger logger = LoggerFactory.getLogger(CommodityBranchAttributesValidator.class);
 
@@ -44,7 +44,7 @@ public class CommodityBranchAttributesValidator implements ConstraintValidator<C
      * @return
      */
     @Override
-    public boolean isValid(RequestCommodity value, ConstraintValidatorContext context) {
+    public boolean isValid(RequestAddCommodity value, ConstraintValidatorContext context) {
         Optional<Commodity> commodityExist = commodityRepository.findByNameAndType(value.getName(), commodityTypeRepository.findById(value.getTypeId()).get() );
         if(commodityExist.isPresent()) {
             /*

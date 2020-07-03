@@ -157,7 +157,7 @@ public class CommodityTypeServiceTest {
     }
 
     @Test
-    @DisplayName("should remove attribute without value")
+    @DisplayName("should remove attribute and value")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
