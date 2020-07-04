@@ -104,6 +104,7 @@ public class CommodityDtoServiceTest {
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
                     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
     })
+
     @Transactional
     @SneakyThrows
     public void testUpdateCommodity() {
@@ -156,13 +157,10 @@ public class CommodityDtoServiceTest {
         branch.setCurrency("USD");
         branch.setPrice(50.0f);
         branch.setAttributes(List.of(
-                AttributeDto.builder()
-                        .name("size")
-                        .value("m").build(),
-                AttributeDto.builder()
-                        .name("color")
-                        .value("#00fc12").build()
-                ));
+                new AttributeDto("size", "m", null),
+                new AttributeDto("color", "#00fc12", null))
+        );
+        log.info(branch.toString());
         commodityService.updateCommodityBranch(branch);
         em.flush();
         branch = commodityService.findBranchById(5l).get();
@@ -220,23 +218,8 @@ public class CommodityDtoServiceTest {
         assertTrue(commodity.isPresent());
     }
 
-//    @Test
-//    @DisplayName("should return all branches")
-//    @SqlGroup({
-//            @Sql(value = "classpath:db/commodity/test-data.sql",
-//                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
-//                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-//            @Sql(value = "classpath:db/commodity/clean-up.sql",
-//                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
-//                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
-//    })
-//    public void findAllBranches() {
-//        List<CommodityBranch> branches = commodityService.findAllBranches();
-//        assertTrue(branches.size() == 1);
-//    }
-
     @Test
-    @DisplayName("should find branche by ID")
+    @DisplayName("should find branch by ID")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),

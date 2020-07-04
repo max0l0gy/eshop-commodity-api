@@ -2,8 +2,10 @@ package ru.maxmorev.eshop.commodity.api.rest.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 
@@ -13,7 +15,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommodityBranchDto {
+    protected static final ObjectMapper mapper = new ObjectMapper();
+
     private Long id;
     private Long commodityId;
     private Integer amount;
@@ -37,7 +43,6 @@ public class CommodityBranchDto {
 
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

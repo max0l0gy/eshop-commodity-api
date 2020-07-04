@@ -4,21 +4,32 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityImage;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityInfo;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommodityInfoDto {
+    protected static final ObjectMapper mapper = new ObjectMapper();
+    @NotNull
     private Long id;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String shortDescription;
+    @NotEmpty
     private String overview;
     private Date dateOfCreation;
     private CommodityTypeDto type;
@@ -47,7 +58,6 @@ public class CommodityInfoDto {
 
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

@@ -43,7 +43,7 @@ public class CommodityManagmentController {
         return new Message(Message.SUCCES, messageSource.getMessage("message_success", new Object[]{}, locale));
     }
 
-    @RequestMapping(path = "commodity/", method = RequestMethod.PUT)
+    @PutMapping(path = "commodity")
     @ResponseBody
     public Message updateCommodity(@RequestBody @Valid CommodityInfoDto cmInfo, Locale locale) {
         commodityService.updateCommodity(cmInfo);

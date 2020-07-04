@@ -3,7 +3,6 @@ package ru.maxmorev.eshop.commodity.api.rest.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import ru.maxmorev.eshop.commodity.api.entities.Commodity;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommodityDto extends CommodityInfoDto {
-
 
     private List<CommodityBranchDto> branches;
 
@@ -56,7 +54,6 @@ public class CommodityDto extends CommodityInfoDto {
 
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
