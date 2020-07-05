@@ -2,7 +2,7 @@
   "id": 4,
   "name": "t-shirt-update",
   "shortDescription": "test description update",
-  "overview": "Overview t-shirt test update",
+  "overview": "Overview t-shirt test update Overview must contain from 64 to 2048 characters Overview must contain from 64 to 2048 characters",
   "images": [
     "https://i.pinimg.com/236x/e9/77/ab/e977abd9949dfafa25431f19dca0c2f6--john-connor-sarah-connor.jpg",
     "https://i.pinimg.com/564x/28/a0/df/28a0dfe3ccb2e0643753c123af6fbdcf.jpg"

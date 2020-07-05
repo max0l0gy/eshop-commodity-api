@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import ru.maxmorev.eshop.commodity.api.entities.Commodity;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityImage;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
 
 import java.util.Date;
 import java.util.List;

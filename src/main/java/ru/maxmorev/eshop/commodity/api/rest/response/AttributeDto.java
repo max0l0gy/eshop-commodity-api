@@ -3,17 +3,19 @@ package ru.maxmorev.eshop.commodity.api.rest.response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranchAttributeSet;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttributeDto {
+    @NotNull
     private String name;
+    @NotNull
     private String value;
     private String measure;
 

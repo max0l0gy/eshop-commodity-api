@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityInfoDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 import ru.maxmorev.eshop.commodity.api.services.CommodityDtoService;
 

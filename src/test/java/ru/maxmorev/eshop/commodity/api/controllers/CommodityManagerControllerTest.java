@@ -19,6 +19,7 @@ import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,6 +68,70 @@ public class CommodityManagerControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(Message.SUCCES)));
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Should expect validation error")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void updateCommodityValidationError() {
+        mockMvc.perform(put("/api/manager/commodity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.getBody("requests/commodityUpdate.Validation.Error.json")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(Message.ERROR)))
+                .andExpect(jsonPath("$.message", is("Validation error")))
+                .andExpect(content().json(TestUtil.getBody("responses/commodityUpdate.Validation.Error.json")));
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Should update commodity branch")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void updateBranchValidationError() {
+        mockMvc.perform(put("/api/manager/branch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.getBody("requests/commodityBranchUpdate.Validation.Error.json")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(Message.ERROR)))
+                .andExpect(content().json(TestUtil.getBody("responses/commodityBranchUpdate.Validation.Error.json")));
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Should update commodity branch")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void updateBranchValidationEmptyAttributesError() {
+        mockMvc.perform(put("/api/manager/branch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.getBody("requests/commodityBranchUpdate.Validation.Empty.Attributes.Error.json")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(Message.ERROR)))
+                .andExpect(content().json(TestUtil.getBody("responses/commodityBranchUpdate.Validation.Empty.Attributes.Error.json")));
     }
 
 }

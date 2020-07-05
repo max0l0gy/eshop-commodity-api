@@ -2,10 +2,10 @@ package ru.maxmorev.eshop.commodity.api.services;
 
 import org.springframework.data.domain.Pageable;
 import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityInfoDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityTypeDto;
 
 import java.util.List;

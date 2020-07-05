@@ -1,0 +1,11 @@
+{
+  "status": "error",
+  "url": "http://localhost/api/manager/branch",
+  "message": "Validation error",
+  "errors": [
+    {
+      "field": "attributes",
+      "message": "The attribute set for a commodity must contain at least one attribute"
+    }
+  ]
+}

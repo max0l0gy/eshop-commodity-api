@@ -17,11 +17,11 @@ import ru.maxmorev.eshop.commodity.api.repository.CommodityBranchRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityTypeRepository;
 import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGrid;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
-import ru.maxmorev.eshop.commodity.api.rest.response.CommodityInfoDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityTypeDto;
 
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component

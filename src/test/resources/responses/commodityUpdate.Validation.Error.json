@@ -1,0 +1,31 @@
+{
+  "status": "error",
+  "url": "http://localhost/api/manager/commodity",
+  "message": "Validation error",
+  "errors": [
+    {
+      "field": "name",
+      "message": "Commodity name cannot be empty"
+    },
+    {
+      "field": "name",
+      "message": "The name must contain from 8 to 256 characters"
+    },
+    {
+      "field": "overview",
+      "message": "Overview must contain from 64 to 2048 characters"
+    },
+    {
+      "field": "shortDescription",
+      "message": "Short description can contain from 16 to 256 characters"
+    },
+    {
+      "field": "images",
+      "message": "Image set for a commodity must contain at least one image URL"
+    },
+    {
+      "field": "id",
+      "message": "Commodity id should not be NULL"
+    }
+  ]
+}

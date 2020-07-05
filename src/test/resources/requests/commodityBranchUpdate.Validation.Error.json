@@ -1,0 +1,14 @@
+{
+  "id": null,
+  "commodityId": null,
+  "amount": 0,
+  "price": 0.0,
+  "currency": "USDE",
+  "attributes": [
+    {
+      "name": null,
+      "value": null,
+      "measure": null
+    }
+  ]
+}

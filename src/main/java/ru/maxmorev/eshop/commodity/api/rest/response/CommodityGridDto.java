@@ -2,8 +2,7 @@ package ru.maxmorev.eshop.commodity.api.rest.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import ru.maxmorev.eshop.commodity.api.entities.Commodity;
-import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
