@@ -134,4 +134,25 @@ public class CommodityManagerControllerTest {
                 .andExpect(content().json(TestUtil.getBody("responses/commodityBranchUpdate.Validation.Empty.Attributes.Error.json")));
     }
 
+    @Test
+    @SneakyThrows
+    @DisplayName("Should update commodity branch")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void updateBranchValidationAttributesDuplicationValuesError() {
+        mockMvc.perform(put("/api/manager/branch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.getBody("requests/commodity-branch-update-validation-duplication-values.json")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(Message.ERROR)));
+                //.andExpect(content().json(TestUtil.getBody("responses/commodityBranchUpdate.Validation.Empty.Attributes.Error.json")));
+    }
+
 }

@@ -1,5 +1,7 @@
 package ru.maxmorev.eshop.commodity.api.rest.validation;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +18,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
+@RequiredArgsConstructor
 public class CommodityBranchAttributesValidator implements ConstraintValidator<CheckCommodityBranchAttributes, RequestAddCommodity> {
+    private final CommodityRepository commodityRepository;
+    private final CommodityTypeRepository commodityTypeRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(CommodityBranchAttributesValidator.class);
-
-    private CommodityRepository commodityRepository;
-    private CommodityTypeRepository commodityTypeRepository;
-
-    @Autowired
-    public void setCommodityRepository(CommodityRepository commodityRepository) {
-        this.commodityRepository = commodityRepository;
-    }
-    @Autowired
-    public void setCommodityTypeRepository(CommodityTypeRepository commodityTypeRepository) {
-        this.commodityTypeRepository = commodityTypeRepository;
-    }
 
     /**
      * In accordance with the business logic we check:

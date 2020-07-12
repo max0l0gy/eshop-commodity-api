@@ -145,5 +145,26 @@ public class CommodityAttributeControllerTest {
 
     }
 
+    @Test
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void createAttributeDuplicationValueError() throws Exception {
+        mockMvc.perform(post("/attribute/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"typeId\":1, \"name\":\"size\", \"dataType\":\"string\", \"measure\":null, \"value\":\"m\"}"))
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.status", is(Message.ERROR)))
+                .andExpect(jsonPath("$.message", is("Validation error")))
+                .andExpect(jsonPath("$.errors").isArray());
+
+    }
+
 
 }

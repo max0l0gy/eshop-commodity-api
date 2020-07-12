@@ -8,9 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 import ru.maxmorev.eshop.commodity.api.rest.response.AttributeDto;
+import ru.maxmorev.eshop.commodity.api.rest.validation.AttributeDuplicationValues;
 
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
@@ -42,7 +42,8 @@ public class CommodityBranchDto {
     private String currency;
     @NotNull(message = "{validation.commodity.propertyValues.NotNull.message}")
     @Size(min=1, message = "{validation.commodity.propertyValues.size.message}")
-    private  List<@Valid AttributeDto>  attributes;
+    @AttributeDuplicationValues(message = "{validation.commodity.attribute.duplication.values}")
+    private List<@Valid AttributeDto> attributes;
 
     @JsonIgnore
     @AssertTrue(message = "{validation.commodity.currencyCode.exist}")
