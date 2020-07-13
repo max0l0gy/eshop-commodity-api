@@ -1,9 +1,6 @@
 package ru.maxmorev.eshop.commodity.api.rest.validation;
 
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestAttributeValue;
-
 import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
