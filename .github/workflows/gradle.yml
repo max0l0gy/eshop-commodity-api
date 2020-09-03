@@ -47,7 +47,7 @@ jobs:
 
     - name: Save DigitalOcean kubeconfig
       run: doctl kubernetes cluster kubeconfig save k8s-eshop
-
+    #k8s deploy
     - name: Deploy to DigitalOcean Kubernetes persistent volume claim
       run: kubectl apply -f $GITHUB_WORKSPACE/k8s-pvc.yaml
     - name: Deploy to DigitalOcean Kubernetes
