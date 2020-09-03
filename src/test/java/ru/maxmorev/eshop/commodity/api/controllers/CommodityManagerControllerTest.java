@@ -94,7 +94,6 @@ public class CommodityManagerControllerTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Should update commodity branch")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",
                     config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
