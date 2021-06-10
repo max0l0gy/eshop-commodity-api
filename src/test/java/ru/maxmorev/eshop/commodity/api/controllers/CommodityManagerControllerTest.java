@@ -17,6 +17,7 @@ import ru.maxmorev.eshop.commodity.api.TestUtil;
 import ru.maxmorev.eshop.commodity.api.rest.response.Message;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -152,6 +153,31 @@ public class CommodityManagerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", is(Message.ERROR)));
                 //.andExpect(content().json(TestUtil.getBody("responses/commodityBranchUpdate.Validation.Empty.Attributes.Error.json")));
+    }
+
+
+    @Test
+    @SneakyThrows
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void  getCommodityBranch() {
+        mockMvc.perform(get("/api/manager/branch/5"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(5)))
+                .andExpect(jsonPath("$.commodityId", is(4)))
+                .andExpect(jsonPath("$.amount", is(5)))
+                .andExpect(jsonPath("$.price", is(3500.0)))
+                .andExpect(jsonPath("$.currency", is("EUR")))
+                .andExpect(jsonPath("$.attributes").isArray())
+
+        ;
     }
 
 }
