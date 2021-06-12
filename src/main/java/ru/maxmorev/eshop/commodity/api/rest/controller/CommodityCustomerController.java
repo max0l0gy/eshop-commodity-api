@@ -35,7 +35,7 @@ public class CommodityCustomerController {
     @ResponseBody
     CommodityDto findCommodityById(@PathVariable(name = "id") Long id) {
         return commodityDtoService
-                .findCommodityByIdWithBranchesAmountGt0(id)
+                .findCommodityById(id)
                 .orElseThrow(() -> new IllegalArgumentException("commodity not found"));
     }
 
