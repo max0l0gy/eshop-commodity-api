@@ -180,4 +180,28 @@ public class CommodityManagerControllerTest {
         ;
     }
 
+    @Test
+    @SneakyThrows
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void  addAmountToBranch() {
+        mockMvc.perform(put("/api/manager/branch/5/amount/inc/2"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(5)))
+                .andExpect(jsonPath("$.commodityId", is(4)))
+                .andExpect(jsonPath("$.amount", is(7)))
+                .andExpect(jsonPath("$.price", is(3500.0)))
+                .andExpect(jsonPath("$.currency", is("EUR")))
+                .andExpect(jsonPath("$.attributes").isArray())
+
+        ;
+    }
+
 }
