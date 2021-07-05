@@ -53,4 +53,10 @@ public class CommodityCustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("type not found"));
     }
 
+    @RequestMapping(path = "branches/amount/eq/0/type/name/{typeName}", method = RequestMethod.GET)
+    @ResponseBody
+    List<CommodityDto> findWithBranchesAmountEq0AndType(@PathVariable(name = "typeName") String typeName) {
+        return commodityDtoService.findWithBranchesAmountEq0AndType(typeName);
+    }
+
 }

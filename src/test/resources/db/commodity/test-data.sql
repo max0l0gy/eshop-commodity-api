@@ -5,9 +5,11 @@ insert into commodity_attribute (id, name, type_id,	data_type, attribute_measure
 
 insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (3, 's', 2, null, null, null);
 insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (33, 'm', 2, null, null, null);
+insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (44, 'm', 2, null, null, null);
 insert into commodity_attribute_value (id, string, attribute_id, integer, real, text) values (9, '#00fc12', 8,  null, null, null);
 
-insert into commodity (id, type_id, name, short_description, overview, date_of_creation, VERSION) values (4, 1,	't-shirt', 'test description',	'Overview t-shirt test',	'2019-08-25 18:46:23.918',	1);
+insert into commodity (id, type_id, name, short_description, overview, date_of_creation, VERSION)
+values (4, 1,	't-shirt', 'test description',	'Overview t-shirt test',	'2019-08-25 18:46:23.918',	1);
 
 
 insert into commodity_image (image_order,	commodity_id, uri,	width,	height)
@@ -15,12 +17,16 @@ insert into commodity_image (image_order,	commodity_id, uri,	width,	height)
 insert into commodity_branch (id, commodity_id, amount,	price, VERSION,	currency)
     values (5, 4, 5, 3500, 1, 'EUR');
 
-insert into commodity_branch_attribute_set (id,	branch_id, attribute_value_id, attribute_id) values (7, 5, 3, 2);
+insert into commodity_branch_attribute_set (id,	branch_id, attribute_value_id, attribute_id)
+values (7, 5, 3, 2);
 
 insert into commodity_type (name, description, VERSION, id) values ('TypeTestDelete', 'test delete', 1, 24);
 
+insert into commodity_branch (id, commodity_id, amount,	price, VERSION,	currency)
+values (15, 4, 0, 3500, 1, 'EUR');
 
-
+insert into commodity_branch_attribute_set (id,	branch_id, attribute_value_id, attribute_id)
+values (17, 15, 44, 2);
 
 
 
