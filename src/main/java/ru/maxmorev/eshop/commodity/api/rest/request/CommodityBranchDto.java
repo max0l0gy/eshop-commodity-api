@@ -34,7 +34,7 @@ public class CommodityBranchDto {
     @NotNull(message = "{branch.commodityId.notNull}")
     private Long commodityId;
     @NotNull(message = "{validation.commodity.amount.NotNull.message}")
-    @Min(value = 1, message = "{validation.commodity.amount.min.message}")
+    @Min(value = 0, message = "{validation.commodity.amount.min.message}")
     private Integer amount;
     @NotNull(message = "{validation.commodity.price.NotNull.message}")
     @Positive(message = "{validation.commodity.price.gt.zero}")

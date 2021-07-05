@@ -73,6 +73,27 @@ public class CommodityManagerControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Should update commodity branch")
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void updateBranchWithAmountZero() {
+        mockMvc.perform(put("/api/manager/branch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.getBody("requests/commodityBranchUpdateWithAmountZero.json")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(Message.SUCCES)))
+        ;
+    }
+
+    @Test
+    @SneakyThrows
     @DisplayName("Should expect validation error")
     @SqlGroup({
             @Sql(value = "classpath:db/commodity/test-data.sql",

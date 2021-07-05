@@ -82,7 +82,7 @@ public class CommodityDtoServiceTest {
         assertEquals(2, commodities.size());
 
         List<CommodityBranch> branches = commodityBranchRepository.findAll();
-        assertEquals(2, branches.size());
+        assertEquals(3, branches.size());
 
         Commodity cm = commodities.get(0);
         assertEquals(1, cm.getImages().size());

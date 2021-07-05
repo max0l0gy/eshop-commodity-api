@@ -29,5 +29,6 @@ public interface CommodityDtoService {
     List<CommodityDto> findAllCommoditiesByTypeName(String typeName);
     Optional<CommodityDto> findCommodityById(Long id);
 
+    List<CommodityDto> findWithBranchesAmountEq0AndType(String typeName);
 
 }

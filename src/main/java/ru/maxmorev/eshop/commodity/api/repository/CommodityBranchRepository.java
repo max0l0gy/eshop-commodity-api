@@ -17,5 +17,7 @@ public interface CommodityBranchRepository extends CrudRepository<CommodityBranc
     @Query("select cb from CommodityBranch cb where cb.amount > 0 and cb.commodity.id = :commodityId")
     List<CommodityBranch> findBranchesByIdWhereAmountGt0(@Param("commodityId") Long commodityId);
 
+    @Query("select cb from CommodityBranch cb where cb.amount = 0 and cb.commodity.id = :commodityId")
+    List<CommodityBranch> findBranchesByCommodityIdWhereAmountEq0(@Param("commodityId")Long commodityId);
 
 }

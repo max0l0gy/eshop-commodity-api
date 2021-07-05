@@ -54,4 +54,32 @@ public class CommodityCustomerControllerTest {
         ;
     }
 
+    @Test
+    @SneakyThrows
+    @SqlGroup({
+            @Sql(value = "classpath:db/commodity/test-data.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(value = "classpath:db/commodity/clean-up.sql",
+                    config = @SqlConfig(encoding = "utf-8", separator = ";", commentPrefix = "--"),
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+    })
+    public void findWithBranchesAmountEq0AndType() {
+        mockMvc.perform(get("/api/v1/branches/amount/eq/0/type/name/TypeTest"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id", is(4)))
+                .andExpect(jsonPath("$[0].name", is("t-shirt")))
+                .andExpect(jsonPath("$[0].shortDescription", is("test description")))
+                .andExpect(jsonPath("$[0].overview", is("Overview t-shirt test")))
+                .andExpect(jsonPath("$[0].type.id", is(1)))
+                .andExpect(jsonPath("$[0].type.name", is("TypeTest")))
+                .andExpect(jsonPath("$[0].type.description", is("test")))
+                .andExpect(jsonPath("$[0].branches[0].amount", is(0)))
+                .andExpect(jsonPath("$[0].branches[0].id", is(15)))
+                .andExpect(jsonPath("$[0].branches[0].price", is(3500.0)))
+        ;
+    }
+
 }

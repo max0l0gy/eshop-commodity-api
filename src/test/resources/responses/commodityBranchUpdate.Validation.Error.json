@@ -8,10 +8,6 @@
       "message": "must not be null"
     },
     {
-      "field": "amount",
-      "message": "The quantity of goods must be greater than zero"
-    },
-    {
       "field": "validCurrencyCode",
       "message": "There is no currencyCode in Currency codes - ISO 4217 https://www.currency-iso.org/en/home/tables/table-a1.html"
     },

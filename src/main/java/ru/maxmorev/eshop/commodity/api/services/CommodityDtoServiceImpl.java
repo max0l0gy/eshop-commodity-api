@@ -16,12 +16,12 @@ import ru.maxmorev.eshop.commodity.api.repository.CommodityAttributeValueReposit
 import ru.maxmorev.eshop.commodity.api.repository.CommodityBranchRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityRepository;
 import ru.maxmorev.eshop.commodity.api.repository.CommodityTypeRepository;
-import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
 import ru.maxmorev.eshop.commodity.api.rest.request.CommodityBranchDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
+import ru.maxmorev.eshop.commodity.api.rest.request.RequestAddCommodity;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGrid;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityGridDto;
-import ru.maxmorev.eshop.commodity.api.rest.request.CommodityInfoDto;
 import ru.maxmorev.eshop.commodity.api.rest.response.CommodityTypeDto;
 
 import java.util.ArrayList;
@@ -285,6 +285,27 @@ public class CommodityDtoServiceImpl implements CommodityDtoService {
                         .map(CommodityBranchDto::of)
                         .collect(Collectors.toList()))
                 );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommodityDto> findWithBranchesAmountEq0AndType(String typeName) {
+        List<Commodity> cmList = commodityRepository
+                .findCommodityWithBranchesWithAmountEq0AndTypeName(typeName);
+        List<CommodityDto> cmDtoList = new ArrayList<>();
+        cmList.forEach(c ->
+                cmDtoList.add(
+                        CommodityDto.of(
+                                c,
+                                commodityBranchRepository
+                                        .findBranchesByCommodityIdWhereAmountEq0(c.getId())
+                                        .stream()
+                                        .map(CommodityBranchDto::of)
+                                        .collect(Collectors.toList())
+                        )
+                )
+        );
+        return cmDtoList;
     }
 
 }

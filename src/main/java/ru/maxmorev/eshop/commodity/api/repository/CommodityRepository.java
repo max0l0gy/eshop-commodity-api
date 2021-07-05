@@ -30,5 +30,11 @@ public interface CommodityRepository extends PagingAndSortingRepository<Commodit
             "group by cb.commodity.id) and c.type.name=:typeName")
     List<Commodity> findCommodityWithBranchesWithAmountGt0AndTypeName(@Param("typeName") String typeName);
 
+    @Query("select c from Commodity c where c.id in (select cb.commodity.id\n" +
+            "from CommodityBranch cb\n" +
+            "where cb.amount = 0  \n" +
+            "group by cb.commodity.id) and c.type.name=:typeName")
+    List<Commodity> findCommodityWithBranchesWithAmountEq0AndTypeName(@Param("typeName") String typeName);
+
 
 }

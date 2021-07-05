@@ -13,7 +13,6 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.maxmorev.eshop.commodity.api.annotation.AttributeDataType;
-import ru.maxmorev.eshop.commodity.api.entities.Commodity;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityAttribute;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityBranch;
 import ru.maxmorev.eshop.commodity.api.entities.CommodityType;
@@ -218,18 +217,17 @@ public class CommodityTypeServiceTest {
     })
     @Transactional
     public void testDeleteAttributeValueByIdError() throws Exception {
-        //deletePropertyValueById(Long valueId)
         log.info("BEFORE OPERATION");
         List<CommodityBranch> branches = commodityBranchRepository.findAll();
-        assertTrue(branches.size() == 1);
+        assertEquals(2, branches.size());
 
         CommodityBranch branch = branches.get(0);
         log.info("branch.getAttributeSet().size()={}", branch.getAttributeSet().size());
-        assertTrue(branch.getAttributeSet().size() == 1);
+        assertEquals(1,branch.getAttributeSet().size());
 
         branch.getAttributeSet().forEach(as -> {
             log.info("attribute value is {}", as.getAttributeValue());
-            assertTrue(as.getAttributeValue().getId() == 3l);
+            assertEquals(3l, as.getAttributeValue().getId().longValue());
         });
 
         commodityTypeService.deleteAttributeValueById(3l);
